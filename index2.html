@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Forever Love</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --rose-red: #ff4d6d;
+            --rose-dark: #c9184a;
+            --glass: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+            color: #4a0e0e;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Heart Animation Effects */
+        .cursor-heart,
+        .burst-heart {
+            position: fixed;
+            pointer-events: none;
+            color: var(--rose-red);
+            z-index: 10000;
+            user-select: none;
+        }
+
+        .cursor-heart {
+            font-size: 1.5rem;
+            animation: fadeUp 1s forwards;
+        }
+
+        .burst-heart {
+            font-size: 2rem;
+            animation: explode 2s ease-out forwards;
+        }
+
+        @keyframes fadeUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Login Overlay */
+        #authOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 192, 203, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 1s ease;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ffe5ec;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .login-box button {
+            background: var(--rose-red);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 20px;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            padding: 60px 40px;
+            border-radius: 50px;
+            text-align: center;
+            width: 90%;
+            max-width: 700px;
+            position: relative;
+            min-height: 400px;
+        }
+
+        #yesBtn {
+            background: var(--rose-red);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #noBtn {
+            background: white;
+            color: #777;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        /* Envelope Styling */
+        .envelope-wrapper {
+            position: relative;
+            width: 280px;
+            height: 160px;
+            background: #ffb3c1;
+            margin: 120px auto 40px auto;
+            border-radius: 0 0 10px 10px;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .envelope-wrapper::before {
+            content: "";
+            position: absolute;
+            top: -85px;
+            left: 0;
+            border-bottom: 85px solid #ffccd5;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            z-index: 2;
+            transition: transform 0.8s ease;
+            transform-origin: bottom;
+        }
+
+        .envelope-wrapper.open::before {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .letter-pop {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 260px;
+            height: 140px;
+            background: #fffcf2;
+            padding: 20px;
+            border-radius: 5px;
+            z-index: 1;
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .envelope-wrapper.open .letter-pop {
+            transform: translateY(-150px) scale(1.4);
+            height: auto;
+            min-height: 180px;
+            z-index: 3;
+        }
+
+        #typewriter {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.1rem;
+            line-height: 1.3;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Valentine Week */
+        #valentineWeek {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 50px auto;
+        }
+
+        .day-card {
+            background: white;
+            padding: 30px;
+            border-radius: 35px;
+            transition: 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .day-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .day-card h3 {
+            color: var(--rose-red);
+            margin: 15px 0 5px 0;
+        }
+
+        .shayari {
+            font-style: italic;
+            font-size: 0.9rem;
+            color: #d4145a;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            display: block;
+        }
+
+        .day-icon {
+            font-size: 3.5rem;
+            display: block;
+        }
+
+        /* Story Section */
+        #storySection {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .moment {
+            display: flex;
+            background: white;
+            margin-bottom: 60px;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: 1s ease;
+        }
+
+        .moment.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .moment:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .moment-img {
+            flex: 1;
+            min-height: 400px;
+            background-size: cover;
+            background-position: center;
+            background-color: #eee;
+        }
+
+        .moment-content {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        footer {
+            padding: 60px 20px;
+            text-align: center;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            margin-top: 50px;
+        }
+
+        .footer-shayari {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: var(--rose-dark);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .footer-credit {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="authOverlay">
+        <div class="login-box">
+            <h2>Our Special Date ❤️</h2>
+            <p style="font-size: 0.8rem; margin-bottom: 10px; color: #999;">Enter the date (DD/MM/YYYY)</p>
+            <input type="text" id="passwordInput">
+            <button onclick="checkPassword()">Unlock My Heart</button>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="card">
+            <div id="askSection">
+                <h1>Will you be my Valentine? ❤️</h1>
+                <p style="margin: 20px 0;">"I know the distance is tough, but I’ve decided to stop counting the
+                    kilometers and start counting the days until I can finally hear you say, 'Suno ji, koi aaya hai.."
+                </p>
+                <div class="btn-box">
+                    <button id="yesBtn" onclick="handleYes()">Yes!</button>
+                    <button id="noBtn">No</button>
+                </div>
+            </div>
+
+            <div id="envelope" class="envelope-wrapper">
+                <div class="letter-pop">
+                    <div>
+                        <h3 id="typewriter"></h3>
+                        <p
+                            style="margin-top: 15px; color: var(--rose-red); font-weight: bold; font-family: 'Poppins'; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                            Keep Scrolling ↓</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="valentineWeek" class="hidden">
+        <h2 style="font-size: 2.5rem; margin-bottom: 20px; text-align:center;">7 Days of Love</h2>
+        <div class="week-grid">
+            <div class="day-card"><span class="day-icon">🌹</span>
+                <h3>Rose Day</h3><span class="shayari">"Phoolon ki khushbu bhi fiki lagti hai..."</span>
+                <p>The most beautiful flower in my life.</p>
+            </div>
+            <div class="day-card"><span class="day-icon">💍</span>
+                <h3>Propose Day</h3><span class="shayari">"Izhaar-e-ishq karne toh do..."</span>
+                <p>I choose you every single day.</p>
+            </div>
+            <div class="day-card"><span class="day-icon">🍫</span>
+                <h3>Chocolate Day</h3><span class="shayari">"Meethi hai teri baatein..."</span>
+                <p>Sweeter than silk.</p>
+            </div>
+            <div class="day-card"><span class="day-icon">🧸</span>
+                <h3>Teddy Day</h3><span class="shayari">"Ek pyara sa teddy tere liye..."</span>
+                <p>Always here to comfort you.</p>
+            </div>
+            <div class="day-card"><span class="day-icon">🤝</span>
+                <h3>Promise Day</h3><span class="shayari">"Vaada hai mera tujhse sanam..."</span>
+                <p>I'll never let you go.</p>
+            </div>
+            <div class="day-card"><span class="day-icon">🫂</span>
+                <h3>Hug Day</h3><span class="shayari">"Gale se lagakar saari duniya bhool jaun..."</span>
+                <p>My favorite home.</p>
+            </div>
+            <div class="day-card"><span class="day-icon">💋</span>
+                <h3>Kiss Day</h3><span class="shayari">"Labon ki narmi, dil ki dhadkan..."</span>
+                <p>A seal of my soul.</p>
+            </div>
+            <div class="day-card" style="border: 2px solid var(--rose-red);"><span class="day-icon">💝</span>
+                <h3>Valentine's Day</h3><span class="shayari">"Tu meri jaan hai, tu hi mera jahaan hai..."</span>
+                <p>Happy Valentine's Day, Love!</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="storySection" class="hidden">
+        <h2 style="text-align:center; margin-bottom: 40px; font-size: 2.5rem;">Our Beautiful Journey</h2>
+
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('Photo11.jpg')"></div>
+            <div class="moment-content">
+                <h3>The Beginning</h3>
+                <p>Where it all started. ❤️
+                <p>I don't have images of that moment because I was way too nervous! We were strangers, but getting to
+                    know you has been the best part of my every day. 😊❤️</p>
+                <br>
+                <p>now i really know why once ghalib said this</p><br>
+                <p style="color: var(--rose-dark); font-weight: bold; font-style: italic;">
+                    "हज़ारों ख़्वाहिशें ऐसी कि हर ख़्वाहिश पे दम निकले,<br>
+                    बहुत निकले मेरे अरमान लेकिन फिर bhi कम निकले।" — ग़ालिब
+                </p>
+                </p>
+            </div>
+        </div>
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('Photo9.jpg')"></div>
+            <div class="moment-content">
+                <h3>The Spark</h3>
+                <p>I knew you it took me too long to understand what you are form me. But its Better late than never,
+                    but better
+                    with you than anyone else.💞💗</p>
+                <br>
+                <p
+                    style="color: var(--rose-dark); font-weight: bold; font-style: italic; border-left: 3px solid var(--rose-red); padding-left: 15px;">
+                    "Suna hai log use aankh bhar ke dekhte hain,<br>
+                    So us ke shehr mein kuch din dher kar dekhte hain."<br>
+                    <span style="font-size: 0.8rem; display: block; margin-top: 5px; opacity: 0.8;">— Ahmad Faraz</span>
+                </p>
+            </div>
+        </div>
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('photo3.jpg')"></div>
+            <div class="moment-content">
+                <h3>Your Smile</h3>
+                <p>My favorite view in the world. I Always want you to smile and never ever want to see you sad and that
+                    is my greed🧿. Now i understand why Gulzar used to say this.... </p>
+                <p
+                    style="color: var(--rose-dark); font-weight: bold; font-style: italic; font-size: 1.1rem; line-height: 1.6; font-family: 'Dancing Script', cursive;">
+                    "Teri muskurahat se hi chalti hai saansein meri...<br>
+                    Bin tere toh hum sirf zinda thhe, jee toh ab rahe hain."
+                </p>
+                <span
+                    style="font-size: 0.8rem; display: block; margin-top: 10px; color: #888; font-family: 'Poppins'; text-transform: uppercase; letter-spacing: 1px;">
+                    — Gulzar
+                </span>
+            </div>
+        </div>
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('photo4.jpg')"></div>
+            <div class="moment-content">
+                <h3>Small Moments</h3>
+                <p>Every second with you is a gift.Whenever we meet i Always wish that moment never fades away🧿💗. you
+                    are me peace in this chaotic world. Now i know why Mirza said this....</p>
+                <p
+                    style="color: #333; font-weight: 600; font-style: italic; font-size: 1.1rem; line-height: 1.5; font-family: 'Dancing Script', cursive;">
+                    "Meherbani ko meri aapsi qissa na samajhna...<br>
+                    Tumse jo lamhe mile hain, unhe sasta na samajhna."
+                </p>
+                <span
+                    style="font-size: 0.8rem; display: block; margin-top: 10px; color: var(--rose-dark); font-family: 'Poppins'; font-weight: bold; text-align: right;">
+                    — Mirza Ghalib
+                </span>
+            </div>
+        </div>
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('photo5.jpg')"></div>
+            <div class="moment-content">
+                <h3>Laughter</h3>
+                <p>Thank you for making me smile.Every time i talk to you you always makes me laugh no matter what the
+                    situation is🧿😊 .I don't no how to express this feeling so i am borrowing some words from </p>
+                <br>
+                <p
+                    style="color: var(--rose-dark); font-weight: 500; font-style: italic; font-size: 1.1rem; line-height: 1.6; font-family: 'Dancing Script', cursive;">
+                    "Kuch toh haseen hai tujhme jo dil kheecha jaata hai...<br>
+                    Warna yun toh haste huye log humne hazaron dekhe hain."
+                </p>
+                <span
+                    style="font-size: 0.85rem; display: block; margin-top: 12px; color: #4a0e0e; font-family: 'Poppins'; font-weight: 700; letter-spacing: 0.5px;">
+                    — Bashir Badr
+                </span>
+            </div>
+        </div>
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('photo6.jpg')"></div>
+            <div class="moment-content">
+                <h3>Togetherness</h3>
+                <p>Side by side, hand in hand.I want to be with you forever. Yes, I’ve made mistakes, but we faced them
+                    together and grew stronger because of it. I just want us to keep doing exactly that—facing
+                    everything hand-in-hand and staying together always💗🧿.I want to say a lot but lets just say...</p>
+                <br>
+                <p style="color: #444; font-size: 0.9rem; margin-top: 10px; font-family: 'Poppins';">
+                    "Duniya jise kehti hai jaadu ka khilona hai,<br>
+                    Mil jaye toh mitti hai, kho jaye toh sona hai."
+                </p>
+                <span
+                    style="font-size: 0.8rem; display: block; margin-top: 12px; color: #999; font-family: 'Poppins'; text-transform: uppercase; font-weight: bold;">
+                    — Nida Fazli
+                </span>
+            </div>
+        </div>
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('photo7.jpg')"></div>
+            <div class="moment-content">
+                <h3>My Better Half</h3>
+                <p>You make my life complete.In you, I found my soulmate, my best friend, and my home. From sharing
+                    secrets to sharing a life—you truly are my everything🧿💗😊. Once Bashir Badr said k...</p>
+                <br>
+                <p
+                    style="color: var(--rose-dark); font-weight: 600; font-style: italic; font-size: 1.15rem; line-height: 1.6; font-family: 'Dancing Script', cursive;">
+                    "Ujaale apni yaadon ke humare saath rehne do...<br>
+                    Na jaane kis gali mein zindagi ki shaam ho jaye."
+                </p>
+                <span
+                    style="font-size: 0.8rem; display: block; margin-top: 12px; color: #777; font-family: 'Poppins'; text-transform: uppercase; letter-spacing: 1px;">
+                    — Bashir Badr
+                </span>
+            </div>
+        </div>
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('phot1.jpg')"></div>
+            <div class="moment-content">
+                <h3>Pure Magic</h3>
+                <p>Life feels like a fairy tale with you.Whenever we meet, it feels as if a spell has been cast over me.
+                    In those moments, you are like a wizard to me, the one who brings me the greatest happiness in the
+                    world🪄💗🧿. you are that medicine for me which Mirza mentioned in his shayari. </p>
+                <br>
+                <p
+                    style="color: var(--rose-dark); font-weight: 600; font-style: italic; font-size: 1.15rem; line-height: 1.6; font-family: 'Dancing Script', cursive;">
+                    "Ishrat-e-qatra hai darya mein fana ho jaana...<br>
+                    Dard ka had se guzarna hai dawa ho jaana."
+                </p>
+                <span
+                    style="font-size: 0.8rem; display: block; margin-top: 12px; color: #999; font-family: 'Poppins'; text-transform: uppercase; font-weight: bold; text-align: right;">
+                    — Mirza Ghalib
+                </span>
+            </div>
+        </div>
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('photo10.jpg')"></div>
+            <div class="moment-content">
+                <h3>Adventures</h3>
+                <p>Counting the days until our next trip.Being with you has been the most exciting and beautiful journey
+                    of my life. Honestly, I want to live this moment with you every single day. When I see others
+                    together, my heart aches for you. I hope this distance is short-lived and we are back in each
+                    other's arms very soon🌹🧿.now because of this distance i know what Parveen Shakir said when he said
+                    k... </p>
+                <br>
+                <p style="color: #666; font-size: 0.85rem; margin-top: 8px; font-family: 'Poppins';">
+                    "Bas ek tumhari hi kami hai mere paas,<br>Varna mere paas toh khuda ka diya sab kuch hai."
+                </p>
+                <span
+                    style="font-size: 0.8rem; display: block; margin-top: 12px; color: #b33951; font-family: 'Poppins'; text-transform: uppercase; font-weight: bold;">
+                    — Parveen Shakir
+                </span>
+            </div>
+        </div>
+        <div class="moment">
+            <div class="moment-img" style="background-image: url('photo8.jpg')"></div>
+            <div class="moment-content">
+                <h3>Forever</h3>
+                <p>I love you infinitely.❤️I know this distance is tough, but trust me—just like we’ve handled
+                    everything else, we will manage this too. Now, a few words just for you these are not from any
+                    shayar these are all my true feelings for you hope you like it.🧿💗😊</p>
+                <br>
+                <p
+                    style="color: #5a4632; font-family: 'Dancing Script', cursive; font-size: 1.3rem; line-height: 1.8; text-align: center;">
+                    Mujhe tumhe udaas nahi, meri bante hue dekhna hai.<br>
+                    Mujhe tumse nahi, shaadi ke baad wali tum se jagadna hai.<br>
+                    Tum jab aaoge haatho mein kangan liye mere paas,<br>
+                    mujhe tumhare un kanganon mein khud ka naam dekhna hai.<br><br>
+                    Jab aaoge tum mere paas, kahogi <i>"Suno ji, koi aaya hai"</i>...<br>
+                    mujhe toh tumhare us wali self se milna hai.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer id="footerSection" class="hidden">
+        <p class="footer-shayari">"Suno... Tum meri wo khwahish ho,<br>Jo kabhi khatam nahi hogi." ❤️</p>
+        <p class="footer-credit">Forever Yours...</p>
+    </footer>
+
+    <script>
+        function createHeartBurst() {
+            for (let i = 0; i < 30; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '🧿';
+                heart.classList.add('burst-heart');
+                heart.style.left = '50%'; heart.style.top = '50%';
+                const tx = (Math.random() - 0.5) * 600 + 'px';
+                const ty = (Math.random() - 0.5) * 600 + 'px';
+                heart.style.setProperty('--tx', tx);
+                heart.style.setProperty('--ty', ty);
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 2000);
+            }
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.9) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '🧿';
+                heart.classList.add('cursor-heart');
+                heart.style.left = e.clientX + 'px';
+                heart.style.top = e.clientY + 'px';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 1000);
+            }
+        });
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            // Password Check
+            if (input === "24/12/2023") {
+                createHeartBurst();
+                document.getElementById('authOverlay').style.opacity = "0";
+                setTimeout(() => document.getElementById('authOverlay').style.display = "none", 1000);
+            } else {
+                alert("Try again, my love! ❤️");
+            }
+        }
+
+        function handleYes() {
+            document.getElementById('askSection').classList.add('hidden');
+            const env = document.getElementById('envelope');
+            env.style.display = 'block';
+            setTimeout(() => {
+                env.classList.add('open');
+                setTimeout(() => {
+                    typeWriter();
+                    document.getElementById('valentineWeek').classList.remove('hidden');
+                    document.getElementById('storySection').classList.remove('hidden');
+                    document.getElementById('footerSection').classList.remove('hidden');
+                }, 800);
+            }, 100);
+        }
+
+        const msg = "I knew you'd say yes! You make me the luckiest person alive. Every day with you feels like Valentine's Day. I love you to the moon and back! ❤️";
+        let charIndex = 0;
+        function typeWriter() {
+            if (charIndex < msg.length) {
+                document.getElementById('typewriter').innerHTML += msg.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 40);
+            }
+        }
+
+        const noBtn = document.getElementById('noBtn');
+        noBtn.addEventListener('mouseover', () => {
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        });
+
+        window.addEventListener('scroll', () => {
+            document.querySelectorAll('.moment').forEach(m => {
+                if (m.getBoundingClientRect().top < window.innerHeight - 100) m.classList.add('reveal');
+            });
+        });
+    </script>
+</body>
+
+</html>
